@@ -1,5 +1,5 @@
 import os
-from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorChooser, JButton, JSeparator, SwingConstants, SpinnerNumberModel, JSpinner
+from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorChooser, JButton, JSeparator, SwingConstants, SpinnerNumberModel, JSpinner, BorderFactory
 from java.awt import Color, GridLayout
 from ij import IJ, WindowManager
 from java.lang import System
@@ -53,11 +53,17 @@ colors = ['Red', 'Green', 'Blue',
 class StackOverlay:
     def __init__(self):
         self.frame = None
+        self.overlayColorPreviewLabel = None
         self.showStackOverlayWindow()
 
     def onQuit(self, e):
         print "Exiting..."
         self.frame.dispose()
+        
+    def showColorChooser(self, e):
+        colorChooser = JColorChooser()
+        self.overlayColor = colorChooser.showDialog(self.frame, "Choose color", Color.red)
+        self.overlayColorPreviewLabel.setBackground(self.overlayColor)
 
     def showStackOverlayWindow(self):
         all = JPanel()
@@ -73,11 +79,11 @@ class StackOverlay:
         baseImageBoxLabel = JLabel("Base image")
         baseImageBox.setSelectedIndex(0)
         all.add(baseImageBoxLabel)
-        all.add(baseImageBox)
+        all.add(baseImageBox, "wrap")
 
-        overlayImageBox = JComboBox(names)
+        overlayImageBox = JComboBox(self.imageNames)
         overlayImageBoxLabel = JLabel("Overlay image")
-        if len(names) > 1:
+        if len(self.imageNames) > 1:
             overlayImageBox.setSelectedIndex(1)
 
         all.add(overlayImageBoxLabel, "gap unrelated")
@@ -89,14 +95,21 @@ class StackOverlay:
         overlayStyleFrame.setLayout(MigLayout())
 
         colorLabel = JLabel("Overlay color")
+        self.overlayColorPreviewLabel = JLabel("           ")
+        self.overlayColorPreviewLabel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0))
+        self.overlayColorPreviewLabel.setOpaque(True)
+        self.overlayColorPreviewLabel.setBackground(Color.red)
         colorPicker = JColorChooser()
+        colorPicker.setPreviewPanel(self.overlayColorPreviewLabel)
+        colorButton = JButton("Select color...", actionPerformed=self.showColorChooser)
 
         opacityLabel = JLabel("Overlay opacity (%)")
         opacitySpinnerModel = SpinnerNumberModel(100, 0, 100, 1)
         opacitySpinner = JSpinner(opacitySpinnerModel)
 
         overlayStyleFrame.add(colorLabel)
-        overlayStyleFrame.add(colorPicker, "wrap")
+        overlayStyleFrame.add(self.overlayColorPreviewLabel)
+        overlayStyleFrame.add(colorButton, "wrap")
 
         overlayStyleFrame.add(opacityLabel)
         overlayStyleFrame.add(opacitySpinner, "wrap")
