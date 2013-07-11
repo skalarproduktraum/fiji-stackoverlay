@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-public class TransparentStackOverlay implements PlugIn {
+public class StackOverlay implements PlugIn {
 
 	@SuppressWarnings("serial")
 	protected class OverlayPropertiesPanel extends Panel{
