@@ -3,110 +3,119 @@ from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorCh
 from java.awt import Color, GridLayout
 from ij import IJ, WindowManager
 from java.lang import System
-
 from net.miginfocom.swing import MigLayout
 
-def onQuit(e):
-    print "Exiting..."
-
-all = JPanel()
-all.setLayout(MigLayout())
-
 colorToRGB = {
-'Red' : [255,0,0],
-'Green' : [0,255,0],
-'Blue' : [0,0,255],
-'Orange' : [255,127,0],
-'Cyan' : [0,255,255],
-'Yellow' : [255,255,0],
-'Magenta' : [255,0,255],
-'Indigo' : [75,0,130],
-'Violet' : [238,130,238],
-'Greyscale' : [255,255,255],
-'Aquamarine' : [127,255,212],
-'Navy Blue' : [0,0,128],
-'Sky Blye' : [135,206,235],
-'Turquoise' : [64,224,208],
-'Beige' : [245,245,220],
-'Brown' : [165,42,42],
-'Chocolate' : [210,105,30],
-'Dark wood' : [133,94,66],
-'Light wood' : [133,99,99],
-'Olive' : [128,128,0],
-'Green yellow' : [173,255,47],
-'Sea green' : [32,178,170],
-'Khaki' : [240,230,140],
-'Salmon' : [250,128,114],
-'Pink' : [255,192,203],
-'Tomato' : [255,99,71],
-'Scarlet' : [140,23,23],
-'Purple' : [128,0,128],
-'Wheat' : [245,222,179],
-'Silver grey' : [192,192,192]
-}
+        'Red' : [255,0,0],
+        'Green' : [0,255,0],
+        'Blue' : [0,0,255],
+        'Orange' : [255,127,0],
+        'Cyan' : [0,255,255],
+        'Yellow' : [255,255,0],
+        'Magenta' : [255,0,255],
+        'Indigo' : [75,0,130],
+        'Violet' : [238,130,238],
+        'Greyscale' : [255,255,255],
+        'Aquamarine' : [127,255,212],
+        'Navy Blue' : [0,0,128],
+        'Sky Blye' : [135,206,235],
+        'Turquoise' : [64,224,208],
+        'Beige' : [245,245,220],
+        'Brown' : [165,42,42],
+        'Chocolate' : [210,105,30],
+        'Dark wood' : [133,94,66],
+        'Light wood' : [133,99,99],
+        'Olive' : [128,128,0],
+        'Green yellow' : [173,255,47],
+        'Sea green' : [32,178,170],
+        'Khaki' : [240,230,140],
+        'Salmon' : [250,128,114],
+        'Pink' : [255,192,203],
+        'Tomato' : [255,99,71],
+        'Scarlet' : [140,23,23],
+        'Purple' : [128,0,128],
+        'Wheat' : [245,222,179],
+        'Silver grey' : [192,192,192]
+        }
 
 colors = ['Red', 'Green', 'Blue',
-          'Orange', 'Indigo',
-          'Cyan', 'Yellow', 'Magenta',
-          'Turquoise', 'Tomato', 'Olive',
-          'Violet', 'Green yellow', 'Khaki',
-          'Scarlet', 'Beige', 'Chocolate',
-          'Silver grey', 'Pink', 'Wheat',
-          'Sea green', 'Greyscale', 'Light wood',
-          'Sky Blye', 'Brown', 'Salmon', 'Navy Blue',
-          'Aquamarine', 'Purple', 'Dark wood']
+        'Orange', 'Indigo',
+        'Cyan', 'Yellow', 'Magenta',
+        'Turquoise', 'Tomato', 'Olive',
+        'Violet', 'Green yellow', 'Khaki',
+        'Scarlet', 'Beige', 'Chocolate',
+        'Silver grey', 'Pink', 'Wheat',
+        'Sea green', 'Greyscale', 'Light wood',
+        'Sky Blye', 'Brown', 'Salmon', 'Navy Blue',
+        'Aquamarine', 'Purple', 'Dark wood']
 
-ids = WindowManager.getIDList()
-names = []
 
-for i in ids:
-    names.append(WindowManager.getImage(i).getTitle())
-    
-baseImageBox = JComboBox(names)
-baseImageBoxLabel = JLabel("Base image")
-baseImageBox.setSelectedIndex(0)
-all.add(baseImageBoxLabel)
-all.add(baseImageBox)
+class StackOverlay:
+    def __init__(self):
+        self.frame = None
+        self.showStackOverlayWindow()
 
-overlayImageBox = JComboBox(names)
-overlayImageBoxLabel = JLabel("Overlay image")
-if len(names) > 1:
-    overlayImageBox.setSelectedIndex(1)
+    def onQuit(self, e):
+        print "Exiting..."
+        self.frame.dispose()
 
-all.add(overlayImageBoxLabel, "gap unrelated")
-all.add(overlayImageBox, "wrap")
+    def showStackOverlayWindow(self):
+        all = JPanel()
+        all.setLayout(MigLayout())
 
-all.add(JSeparator(SwingConstants.HORIZONTAL), "span, wrap")
+        self.imageIDs = WindowManager.getIDList()
+        self.imageNames = []
 
-overlayStyleFrame = JPanel()
-overlayStyleFrame.setLayout(MigLayout())
-        
-colorLabel = JLabel("Overlay color")
-colorPicker = JColorChooser()
+        for i in self.imageIDs:
+            self.imageNames.append(WindowManager.getImage(i).getTitle())
 
-opacityLabel = JLabel("Overlay opacity (%)")
-opacitySpinnerModel = SpinnerNumberModel(100, 0, 100, 1)
-opacitySpinner = JSpinner(opacitySpinnerModel)
+        baseImageBox = JComboBox(self.imageNames)
+        baseImageBoxLabel = JLabel("Base image")
+        baseImageBox.setSelectedIndex(0)
+        all.add(baseImageBoxLabel)
+        all.add(baseImageBox)
 
-overlayStyleFrame.add(colorLabel)
-overlayStyleFrame.add(colorPicker, "wrap")
+        overlayImageBox = JComboBox(names)
+        overlayImageBoxLabel = JLabel("Overlay image")
+        if len(names) > 1:
+            overlayImageBox.setSelectedIndex(1)
 
-overlayStyleFrame.add(opacityLabel)
-overlayStyleFrame.add(opacitySpinner, "wrap")
+        all.add(overlayImageBoxLabel, "gap unrelated")
+        all.add(overlayImageBox, "wrap")
 
-all.add(overlayStyleFrame, "span, wrap")
+        all.add(JSeparator(SwingConstants.HORIZONTAL), "span, wrap")
 
-# TODO: add non-thermonuclear cancel button functionality
-overlayCancelButton = JButton("Cancel", actionPerformed=onQuit)
-overlayStartButton = JButton("Overlay images")
+        overlayStyleFrame = JPanel()
+        overlayStyleFrame.setLayout(MigLayout())
 
-all.add(overlayCancelButton, "gapleft push")
-all.add(overlayStartButton, "gapleft push")
+        colorLabel = JLabel("Overlay color")
+        colorPicker = JColorChooser()
 
-frame = JFrame("Stack Overlay")
-frame.getContentPane().add(JScrollPane(all))
-frame.pack()
-frame.setLocationRelativeTo(None)
-frame.setVisible(True)
+        opacityLabel = JLabel("Overlay opacity (%)")
+        opacitySpinnerModel = SpinnerNumberModel(100, 0, 100, 1)
+        opacitySpinner = JSpinner(opacitySpinnerModel)
 
-IJ.showStatus("Hello, world!")
+        overlayStyleFrame.add(colorLabel)
+        overlayStyleFrame.add(colorPicker, "wrap")
+
+        overlayStyleFrame.add(opacityLabel)
+        overlayStyleFrame.add(opacitySpinner, "wrap")
+
+        all.add(overlayStyleFrame, "span, wrap")
+
+        # TODO: add non-thermonuclear cancel button functionality
+        overlayCancelButton = JButton("Cancel", actionPerformed=self.onQuit)
+        overlayStartButton = JButton("Overlay images")
+
+        all.add(overlayCancelButton, "gapleft push")
+        all.add(overlayStartButton, "gapleft push")
+
+        self.frame = JFrame("Stack Overlay")
+        self.frame.getContentPane().add(JScrollPane(all))
+        self.frame.pack()
+        self.frame.setLocationRelativeTo(None)
+        self.frame.setVisible(True)
+
+stackOverlay = StackOverlay()
+
+print "Done."
