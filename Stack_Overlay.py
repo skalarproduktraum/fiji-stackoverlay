@@ -1,5 +1,5 @@
 import os
-from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorChooser, JButton, JSeparator, SwingConstants, SpinnerNumberModel, JSpinner, BorderFactory
+from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorChooser, JButton, JSeparator, SwingConstants, SpinnerNumberModel, JSpinner, BorderFactory, JCheckBox
 from java.awt import Color, GridLayout
 from ij import IJ, WindowManager, ImagePlus, ImageStack
 from java.lang import System
@@ -31,6 +31,10 @@ class StackOverlay:
         self.imageIDs = WindowManager.getIDList()
         self.imageNames = []
 
+        if self.imageIDs is None:
+            IJ.error("No open images", "Stack Overlay requires at least one image to be already open.")
+            return
+
         for i in self.imageIDs:
             self.imageNames.append(WindowManager.getImage(i).getTitle())
 
@@ -52,6 +56,7 @@ class StackOverlay:
 
         overlayStyleFrame = JPanel()
         overlayStyleFrame.setLayout(MigLayout())
+        overlayStyleFrame.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Overlay Style"), BorderFactory.createEmptyBorder(5,5,5,5)))
 
         colorLabel = JLabel("Overlay color")
         self.overlayColorPreviewLabel = JLabel("           ")
@@ -73,13 +78,17 @@ class StackOverlay:
 
         overlayStyleFrame.add(opacityLabel)
         overlayStyleFrame.add(opacitySpinner, "wrap")
+        
 
         all.add(overlayStyleFrame, "span, wrap")
+        
+        self.virtualStackCheckbox = JCheckBox("Use Virtual Stack", True)
+        all.add(self.virtualStackCheckbox, "span, wrap")
 
         # TODO: add non-thermonuclear cancel button functionality
         overlayCancelButton = JButton("Cancel", actionPerformed=self.onQuit)
         overlayStartButton = JButton("Overlay images", actionPerformed=self.overlayImages)
-
+        
         all.add(overlayCancelButton, "gapleft push")
         all.add(overlayStartButton, "gapleft push")
 
