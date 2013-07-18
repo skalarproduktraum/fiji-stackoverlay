@@ -136,25 +136,35 @@ class StackOverlay:
 class OverlayVirtualStack(VirtualStack):
     def __init__(self):
         self.last = None
+        self.overlayColor = [255, 255, 255]
+        self.overlayOpacity = 1.0
+        self.blendMode = 1
+        self.base = None
+        self.overlay = None
 
     def getProcessor(self, i):
-        pass
+        R = Multiply(self.base.getStack().getProcessor(i), self.overlayColor[0]) 
+        G = Multiply(self.base.getStack().getProcessor(i), self.overlayColor[1])
+        B = Multiply(self.base.getStack().getProcessor(i), self.overlayColor[2])
+        rgb = RGBA(R, G, B).asImage()
+        self.last = IJF.displayAsVirtualStack(rgb).getProcessor()
+        return self.last
 
     def getSize(self):
-        pass
+        return self.base.getStackSize()
 
     def getSliceLabel(self, i):
-        pass
+        return str(i)
 
     def getWidth(self):
-        pass
+        self.last.getWidth()
 
     def getHeight(self):
-        pass
+        self.last.getHeight()
 
     def getPixels(self, i):
         return self.getProcessor(i).getPixels()
-    def setPixels(self, i):
+    def setPixels(self, pixels, i):
         pass
 
 stackOverlay = StackOverlay()
