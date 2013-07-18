@@ -136,21 +136,39 @@ class StackOverlay:
                 
                 ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.baseImageBox.getSelectedIndex()], stack).show()
 
+
+def blendImages(base, overlay, mode="screen"):
+    print type(base), type(overlay)
+    if mode == "screen":
+        image = None
+    if mode == "multiply":
+        image = Multiply(base, overlay)
+    if mode == "add":
+        image = Add(base, overlay)
+    if mode == "difference":
+        image = Difference(base, overlay)
+
+    return image
+
 class OverlayVirtualStack(VirtualStack):
     def __init__(self):
         self.last = None
         self.overlayColor = [255, 255, 255]
         self.overlayOpacity = 1.0
-        self.blendMode = 1
+        self.blendMode = "screen"
         self.base = None
         self.overlay = None
 
     def getProcessor(self, i):
-        R = Multiply(self.base.getStack().getProcessor(i), self.overlayColor[0]) 
-        G = Multiply(self.base.getStack().getProcessor(i), self.overlayColor[1])
-        B = Multiply(self.base.getStack().getProcessor(i), self.overlayColor[2])
-        rgb = RGBA(R, G, B).asImage()
-        self.last = IJF.displayAsVirtualStack(rgb).getProcessor()
+        overlay = IJF.wrap(ImagePlus("", self.overlay.getStack().getProcessor(i)))
+        base = IJF.wrap(ImagePlus("", self.base.getStack().getProcessor(i)))
+        R = Multiply(overlay, self.overlayColor[0])
+        G = Multiply(overlay, self.overlayColor[1])
+        B = Multiply(overlay, self.overlayColor[2])
+        
+        overlayrgb = RGBA(R, G, B).asImage()
+        image = blendImages(overlayrgb, overlayrgb, "add")
+        self.last = IJF.displayAsVirtualStack(image.asImage()).getProcessor()
         return self.last
 
     def getSize(self):
