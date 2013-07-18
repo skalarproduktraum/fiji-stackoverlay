@@ -1,10 +1,13 @@
 import os
-from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorChooser, JButton, JSeparator, SwingConstants, SpinnerNumberModel, JSpinner, BorderFactory, JCheckBox
 from java.awt import Color, GridLayout
-from ij import IJ, WindowManager, ImagePlus, ImageStack
-from java.lang import System
+from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorChooser, JButton, JSeparator, SwingConstants, SpinnerNumberModel, JSpinner, BorderFactory, JCheckBox
 from net.miginfocom.swing import MigLayout
-from script.imglib.math import Multiply
+
+from ij import IJ, WindowManager, ImagePlus, ImageStack
+from script.imglib.math import Multiply, Difference, Subtract, Xor, Add
+from script.imglib.color import Red, Green, Blue, RGBA
+from mpicbg.imglib.image.display.imagej import ImageJFunctions as IJF
+
 
 def AWTColorToArray(color):
     return [color.getRed(), color.getGreen(), color.getBlue()]
