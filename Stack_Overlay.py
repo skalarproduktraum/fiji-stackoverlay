@@ -4,6 +4,7 @@ from java.awt import Color, GridLayout
 from ij import IJ, WindowManager, ImagePlus, ImageStack
 from java.lang import System
 from net.miginfocom.swing import MigLayout
+from script.imglib.math import Multiply
 
 def AWTColorToArray(color):
     return [color.getRed(), color.getGreen(), color.getBlue()]
@@ -70,14 +71,14 @@ class StackOverlay:
 
         opacityLabel = JLabel("Overlay opacity (%)")
         opacitySpinnerModel = SpinnerNumberModel(100, 0, 100, 1)
-        opacitySpinner = JSpinner(opacitySpinnerModel)
+        self.opacitySpinner = JSpinner(opacitySpinnerModel)
 
         overlayStyleFrame.add(colorLabel)
         overlayStyleFrame.add(self.overlayColorPreviewLabel)
         overlayStyleFrame.add(colorButton, "wrap")
 
         overlayStyleFrame.add(opacityLabel)
-        overlayStyleFrame.add(opacitySpinner, "wrap")
+        overlayStyleFrame.add(self.opacitySpinner, "wrap")
         
 
         all.add(overlayStyleFrame, "span, wrap")
@@ -102,17 +103,35 @@ class StackOverlay:
         impBase = WindowManager.getImage(self.imageIDs[self.baseImageBox.getSelectedIndex()])
         refBase = impBase.getStack().getProcessor(1)
         
-        stack = ImageStack(refBase.width, refBase.height)
+        impOverlay = WindowManager.getImage(self.imageIDs[self.overlayImageBox.getSelectedIndex()])
+        refOverlay = impOverlay.getStack().getProcessor(1)
         
-        for i in range(1, impBase.getStackSize()):
-            base = impBase.getStack().getProcessor(i).convertToRGB()
-            overlay = impBase.getStack().getProcessor(i).convertToRGB().getPixels()
-            #overlayColored = map(lambda x: x * AWTColorToArray(self.overlayColor), overlay)
-            IJ.showProgress(i, impBase.getStackSize())
-            print 'slice %i of %i' %(i, impBase.getStackSize()) 
-            stack.addSlice(impBase.getStack().getSliceLabel(i), base)
-            
-        ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.baseImageBox.getSelectedIndex()], stack).show()
+        print "Overlaying for stack sizes " + str(impBase.getStackSize()) + "/" + str(impOverlay.getStackSize()) + "..."
+        
+        stack = None
+        
+        if self.virtualStackCheckbox.isSelected():
+            stack = OverlayVirtualStack()
+            stack.overlayOpacity = float(self.opacitySpinner.getValue())/100.0
+            stack.overlayColor = AWTColorToArray(self.overlayColorPreviewLabel.getBackground())
+            stack.base = impBase
+            stack.overlay = impOverlay
+
+            ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.baseImageBox.getSelectedIndex()], stack).show()
+        else:
+            stack = ImageStack(refBase.width, refBase.height)
+        
+            for i in range(1, impBase.getStackSize()):
+                base = impBase.getStack().getProcessor(i).convertToRGB()
+                overlay = refBase.getStack().getProcessor(i).convertToRGB().getPixels()
+                print len(base)
+                print len(overlay)
+                #overlayColored = map(lambda x: x * AWTColorToArray(self.overlayColor), overlay)
+                IJ.showProgress(i, impBase.getStackSize())
+                print 'slice %i of %i' %(i, impBase.getStackSize()) 
+                stack.addSlice(impBase.getStack().getSliceLabel(i), base)
+                
+                ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.baseImageBox.getSelectedIndex()], stack).show()
 
 class OverlayVirtualStack(VirtualStack):
     def __init__(self):
