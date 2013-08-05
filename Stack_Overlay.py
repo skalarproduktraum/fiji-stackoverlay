@@ -123,18 +123,7 @@ class StackOverlay:
 
             ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.overlayImageBox.getSelectedIndex()], stack).show()
         else:
-            stack = ImageStack(refBase.width, refBase.height)
-        
-            for i in range(1, impBase.getStackSize()):
-                base = impBase.getStack().getProcessor(i).convertToRGB()
-                overlay = refBase.getStack().getProcessor(i).convertToRGB().getPixels()
-                print len(base)
-                print len(overlay)
-                #overlayColored = map(lambda x: x * AWTColorToArray(self.overlayColor), overlay)
-                IJ.showProgress(i, impBase.getStackSize())
-                print 'slice %i of %i' %(i, impBase.getStackSize()) 
-                stack.addSlice(impBase.getStack().getSliceLabel(i), base)
-                ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and segmentation " + self.imageNames[self.overlayImageBox.getSelectedIndex()], stack).show()
+            IJ.error("Not implemented yet", "Using normal stacks is not implemented yet. Please use the Virtual Stack option.")
 
 
 def blendImages(base, overlay, mode="screen"):
