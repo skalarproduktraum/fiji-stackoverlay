@@ -28,3 +28,9 @@ Known issues
   started Fiji takes a bit of time as it has to load the Jython interpreter.
 * not using a Virtual Stack is not implemented yet.
 * overlay opacity is not implemented yet.
+
+
+License
+-------
+Stack Overlay is licensed under the 2 clause BSD license. See LICENSE file for details.
+The repository includes MigLayout, which is under the same license.
