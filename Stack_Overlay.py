@@ -4,7 +4,8 @@ from javax.swing import JPanel, JComboBox, JLabel, JFrame, JScrollPane, JColorCh
 from net.miginfocom.swing import MigLayout
 
 from ij import IJ, WindowManager, ImagePlus, ImageStack
-from script.imglib.math import Multiply, Difference, Subtract, Xor, Add
+from ij.process import Blitter
+from script.imglib.math import Multiply, Difference, Subtract, Xor, Add, Or
 from script.imglib.color import Red, Green, Blue, RGBA
 from mpicbg.imglib.image.display.imagej import ImageJFunctions as IJF
 
@@ -161,14 +162,15 @@ class OverlayVirtualStack(VirtualStack):
 
     def getProcessor(self, i):
         overlay = IJF.wrap(ImagePlus("", self.overlay.getStack().getProcessor(i)))
-        base = IJF.wrap(ImagePlus("", self.base.getStack().getProcessor(i)))
-        R = Multiply(overlay, self.overlayColor[0])
-        G = Multiply(overlay, self.overlayColor[1])
-        B = Multiply(overlay, self.overlayColor[2])
-        
-        overlayrgb = RGBA(R, G, B).asImage()
-        image = blendImages(overlayrgb, overlayrgb, "add")
-        self.last = IJF.displayAsVirtualStack(image.asImage()).getProcessor()
+        base = self.base.getStack().getProcessor(i)
+        R = Xor(overlay, self.overlayColor[0])
+        G = Xor(overlay, self.overlayColor[1])
+        B = Xor(overlay, self.overlayColor[2])
+
+        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B).asImage())
+        base.copyBits(overlayrgb.getProcessor(), 0, 0, Blitter.COPY_ZERO_TRANSPARENT)
+        baseImage = IJF.wrap(ImagePlus("", base))
+        self.last = IJF.displayAsVirtualStack(baseImage).getProcessor()
         return self.last
 
     def getSize(self):
