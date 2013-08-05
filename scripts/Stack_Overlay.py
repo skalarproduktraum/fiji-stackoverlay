@@ -54,7 +54,7 @@ class StackOverlay:
         if len(self.imageNames) > 1:
             self.overlayImageBox.setSelectedIndex(1)
 
-        all.add(overlayImageBoxLabel, "gap unrelated")
+        all.add(overlayImageBoxLabel)
         all.add(self.overlayImageBox, "wrap")
 
         all.add(JSeparator(SwingConstants.HORIZONTAL), "span, wrap")
@@ -155,7 +155,7 @@ class OverlayVirtualStack(VirtualStack):
         G = Multiply(overlay, self.overlayColor[1])
         B = Multiply(overlay, self.overlayColor[2])
 
-        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B, self.overlayOpacity).asImage())
+        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B, self.overlayOpacity*255).asImage())
         base.copyBits(overlayrgb.getProcessor(), 0, 0, Blitter.COPY_ZERO_TRANSPARENT)
         baseImage = IJF.wrap(ImagePlus("", base))
         self.last = IJF.displayAsVirtualStack(baseImage).getProcessor()
