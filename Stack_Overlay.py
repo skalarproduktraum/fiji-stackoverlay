@@ -161,12 +161,12 @@ class OverlayVirtualStack(VirtualStack):
 
     def getProcessor(self, i):
         overlay = IJF.wrap(ImagePlus("", self.overlay.getStack().getProcessor(i)))
-        base = self.base.getStack().getProcessor(i)
-        R = Xor(overlay, self.overlayColor[0])
-        G = Xor(overlay, self.overlayColor[1])
-        B = Xor(overlay, self.overlayColor[2])
+        base = self.base.getStack().getProcessor(i).convertToRGB()
+        R = Multiply(overlay, self.overlayColor[0])
+        G = Multiply(overlay, self.overlayColor[1])
+        B = Multiply(overlay, self.overlayColor[2])
 
-        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B).asImage())
+        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B, self.overlayOpacity).asImage())
         base.copyBits(overlayrgb.getProcessor(), 0, 0, Blitter.COPY_ZERO_TRANSPARENT)
         baseImage = IJF.wrap(ImagePlus("", base))
         self.last = IJF.displayAsVirtualStack(baseImage).getProcessor()
