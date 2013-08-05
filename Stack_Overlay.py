@@ -121,7 +121,7 @@ class StackOverlay:
             stack.base = impBase
             stack.overlay = impOverlay
 
-            ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.baseImageBox.getSelectedIndex()], stack).show()
+            ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.overlayImageBox.getSelectedIndex()], stack).show()
         else:
             stack = ImageStack(refBase.width, refBase.height)
         
@@ -134,8 +134,7 @@ class StackOverlay:
                 IJ.showProgress(i, impBase.getStackSize())
                 print 'slice %i of %i' %(i, impBase.getStackSize()) 
                 stack.addSlice(impBase.getStack().getSliceLabel(i), base)
-                
-                ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and " + self.imageNames[self.baseImageBox.getSelectedIndex()], stack).show()
+                ImagePlus("Stack Overlay from " + self.imageNames[self.baseImageBox.getSelectedIndex()] + " and segmentation " + self.imageNames[self.overlayImageBox.getSelectedIndex()], stack).show()
 
 
 def blendImages(base, overlay, mode="screen"):
