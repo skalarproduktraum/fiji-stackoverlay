@@ -1,4 +1,4 @@
-package my;
+package Stack_Overlay;
 import ij.plugin.PlugIn;
 import Jython.Refresh_Jython_Scripts;
  

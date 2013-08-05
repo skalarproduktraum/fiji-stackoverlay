@@ -11,10 +11,17 @@ IJ_JAR=`ls $FIJI_PATH/jars | grep 'ij-' | head -n1`
 JYTHON_INTERPRETER_JAR=`ls $FIJI_PATH/plugins | grep 'Jython_Interpreter' | head -n1`
 FIJI_SCRIPTING_JAR=`ls $FIJI_PATH/jars | grep 'fiji-scripting-' | head -n1`
 
-javac -classpath .:$FIJI_PATH/jars/$IJ_JAR:$FIJI_PATH/jars/$FIJI_SCRIPTING_JAR:$FIJI_PATH/plugins/$JYTHON_INTERPRETER_JAR JythonLauncher.java
+javac -classpath .:$FIJI_PATH/jars/$IJ_JAR:$FIJI_PATH/jars/$FIJI_SCRIPTING_JAR:$FIJI_PATH/plugins/$JYTHON_INTERPRETER_JAR java/JythonLauncher.java
 
 if [ ! "$?" = "0" ]; then
-    echo "Build failed. Please check javac output for errors"
+    echo "Build failed. Please check javac output for errors."
+    exit 1
+fi
+
+jar cf Stack_Overlay.jar plugins.config Stack_Overlay/JythonLauncher.class scripts/*.py jars/miglayout-*.jar
+
+if [ ! "$?" = "0" ]; then
+    echo "JARring failed. Please check output for errors."
     exit 1
 fi
 
