@@ -1,9 +1,14 @@
 #!/bin/sh
 
-FIJI_PATH="/Applications/Fiji.app"
+if [ -z "$1" ]
+  then
+    FIJI_PATH="/Applications/Fiji.app"
+else
+    FIJI_PATH=$1
+fi
 
 if [ ! -d $FIJI_PATH ]; then
-    echo "Fiji.app does not exist in /Applications. Please specify the path to Fiji.app manually as argument, e.g. $0 /path/to/Fiji.app"
+    echo "Fiji.app does not exist in $FIJI_PATH.\nPlease specify the path to Fiji.app manually as argument, e.g. $0 /path/to/Fiji.app"
     exit 1
 fi
 
