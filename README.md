@@ -7,7 +7,7 @@ With this plugin, you can create a colored overlay of two images.
 This is especially useful when you want to check an images' segmentation
 against the original version.
 ![Image of a bile canaliculus overlaid with it's segmentation in red
-color](./stack_overlay.png "Image of a bile canaliculus overlaid with it's segmentation in red
+color](./examples/bile_canaliculus.png "Image of a bile canaliculus overlaid with it's segmentation in red
 color")
 
 Installation
@@ -23,5 +23,8 @@ You'll find the plugin under `Plugins > Stack Overlay`.
 
 Known issues
 ------------
-Launching the Stack Overlay plugin for the first time after you have
-started Fiji takes a bit of time as it has to load the Jython interpreter.
+
+* Launching the Stack Overlay plugin for the first time after you have
+  started Fiji takes a bit of time as it has to load the Jython interpreter.
+* not using a Virtual Stack is not implemented yet.
+* overlay opacity is not implemented yet.
