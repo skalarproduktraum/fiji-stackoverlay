@@ -6,9 +6,6 @@ Overview
 With this plugin, you can create a colored overlay of two images.
 This is especially useful when you want to check an images' segmentation
 against the original version.
-![Image of a bile canaliculus overlaid with it's segmentation in red
-color](./examples/bile_canaliculus.png "Image of a bile canaliculus overlaid with it's segmentation in red
-color")
 
 Installation
 ------------
