@@ -5,7 +5,7 @@ from net.miginfocom.swing import MigLayout
 
 from ij import IJ, WindowManager, ImagePlus, ImageStack
 from ij.process import Blitter
-from script.imglib.math import Multiply, Difference, Subtract, Xor, Add, Or
+from script.imglib.math import Multiply, Difference, Subtract, Xor, Add, Or, Min
 from script.imglib.color import Red, Green, Blue, RGBA
 from mpicbg.imglib.image.display.imagej import ImageJFunctions as IJF
 
@@ -151,9 +151,9 @@ class OverlayVirtualStack(VirtualStack):
     def getProcessor(self, i):
         overlay = IJF.wrap(ImagePlus("", self.overlay.getStack().getProcessor(i)))
         base = self.base.getStack().getProcessor(i).convertToRGB()
-        R = Multiply(overlay, self.overlayColor[0])
-        G = Multiply(overlay, self.overlayColor[1])
-        B = Multiply(overlay, self.overlayColor[2])
+        R = Min(overlay, self.overlayColor[0])
+        G = Min(overlay, self.overlayColor[1])
+        B = Min(overlay, self.overlayColor[2])
 
         overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B, self.overlayOpacity*255).asImage())
         base.copyBits(overlayrgb.getProcessor(), 0, 0, Blitter.COPY_ZERO_TRANSPARENT)
