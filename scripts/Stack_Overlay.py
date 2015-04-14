@@ -155,7 +155,9 @@ class OverlayVirtualStack(VirtualStack):
         G = Min(overlay, self.overlayColor[1])
         B = Min(overlay, self.overlayColor[2])
 
-        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B, self.overlayOpacity*255).asImage())
+        print "Opacity is " + str(self.overlayOpacity)
+
+        overlayrgb = IJF.copyToImagePlus(RGBA(R, G, B, self.overlayOpacity).asImage())
         base.copyBits(overlayrgb.getProcessor(), 0, 0, Blitter.COPY_ZERO_TRANSPARENT)
         baseImage = IJF.wrap(ImagePlus("", base))
         self.last = IJF.displayAsVirtualStack(baseImage).getProcessor()
